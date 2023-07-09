@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product CRUD</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Create Product</h2>
+        <form id="create-form">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price:</label>
+                <input type="number" class="form-control" name="price" required>
+            </div>
+
+            <div class="form-group">
+                <label for="color">Color:</label>
+                <input type="text" class="form-control" name="color" required>
+            </div>
+
+            <div class="form-group">
+                <label for="brand">Brand:</label>
+                <input type="text" class="form-control" name="brand" required>
+            </div>
+
+            <div class="form-group">
+                <label for="year">Year:</label>
+                <input type="text" class="form-control" name="year" required>
+            </div>
+
+            <div class="form-group">
+                <label for="spec">Spec:</label>
+                <textarea class="form-control" name="spec" rows="5" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create Product</button>
+        </form>
+
+        <h2>View Products</h2>
+        <table id="product-table" class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Color</th>
+                    <th>Brand</th>
+                    <th>Year</th>
+                    <th>Spec</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <script>
+        // Function to fetch and display all products
+        function fetchProducts() {
+            $.ajax({
+                url: 'get_all.php',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    var table = $('#product-table tbody');
+                    table.empty();
+
+                    $.each(response, function(index, product) {
+                        table.append('<tr>' +
+                            '<td>' + product.id + '</td>' +
+                            '<td>' + product.name + '</td>' +
+                            '<td>' + product.price + '</td>' +
+                            '<td>' + product.color + '</td>' +
+                            '<td>' + product.brand + '</td>' +
+                            '<td>' + product.year + '</td>' +
+                            '<td>' + product.spec + '</td>' +
+                            '<td>' +
+                            '<a href="#" class="edit btn btn-primary" data-id="' + product.id + '">Edit</a> ' +
+                            '<a href="#" class="delete btn btn-danger" data-id="' + product.id + '">Delete</a>' +
+                            '</td>' +
+                            '</tr>');
+                    });
+                }
+            });
+        }
+
+        // Create product
+        $('#create-form').on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = $(this).serialize();
+
+            $.ajax({
+                url: 'create.php',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        alert('Product created successfully.');
+                        fetchProducts();
+                        $('#create-form')[0].reset();
+                    } else {
+                        alert('Error creating product: ' + response.message);
+                    }
+                }
+            });
+        });
+
+        // Edit product
+        $(document).on('click', '.edit', function(e) {
+            e.preventDefault();
+
+            var productId = $(this).data('id');
+
+            // You can implement the edit functionality based on your needs
+            // Example: Show a modal with the product details pre-filled for editing
+            // and submit the updated data using AJAX to update.php
+            // You would also need to create an appropriate HTML form/modal for editing
+            // and an update.php script for handling the update operation
+        });
+
+        // Delete product
+        $(document).on('click', '.delete', function(e) {
+            e.preventDefault();
+
+            var productId = $(this).data('id');
+
+            if (confirm('Are you sure you want to delete this product?')) {
+                $.ajax({
+                    url: 'delete.php',
+                    type: 'POST',
+                    data: { id: productId },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            alert('Product deleted successfully.');
+                            fetchProducts();
+                        } else {
+                            alert('Error deleting product: ' + response.message);
+                        }
+                    }
+                });
+            }
+        });
+
+        // Fetch products on page load
+        fetchProducts();
+    </script>
+</body>
+</html>
