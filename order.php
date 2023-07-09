@@ -24,7 +24,7 @@ function createOrder($customerName, $productId, $address, $paymentMethod, $statu
     
     $sql = "INSERT INTO `order` (customer_name, id_product, address, payment_method, status)
             VALUES ('$customerName', $productId, '$address', '$paymentMethod', '$status')";
-    
+    echo $sql;
     if ($conn->query($sql) === true) {
         return json_encode(array("status" => "success"));
     } else {
