@@ -2,7 +2,7 @@
 // MySQL connection configuration
 $servername = "localhost";
 $username = "root";
-$password = "";
+$password = "password";
 $database = "ridwan";
 
 
